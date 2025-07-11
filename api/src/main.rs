@@ -1,3 +1,30 @@
-fn main() {
-    println!("Hello, world!");
+use poem::{
+    get, handler, listener::TcpListener, post, web::Json, EndpointExt, Route, Server
+};
+use serde::Deserialize;
+
+
+
+    
+
+#[derive(Debug, Deserialize)]
+struct CreateSomething {
+    name: String,
+}
+
+#[handler]
+fn hello(req: Json<CreateSomething>) -> Json<serde_json::Value> {
+    Json(serde_json::json! ({
+        "code": 0,
+        "message": req.name,
+    }))
+}
+
+#[tokio::main]
+async fn main() -> Result<(), std::io::Error> {
+   
+    let app = Route::new().at("/hello", post(hello));
+    Server::new(TcpListener::bind("0.0.0.0:3000"))
+        .run(app)
+        .await
 }
