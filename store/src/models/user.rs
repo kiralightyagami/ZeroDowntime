@@ -2,11 +2,12 @@ use crate::store::Store;
 
 
 impl Store {
-    pub fn create_user(&self){
+    pub fn sign_up(&self, username: String, password: String){
 
     }
-    pub fn get_user(&self) -> String {
-        "123".to_string()
-        
+
+    pub fn sign_in(&self, username: String, password: String){
+
     }
+
 }
