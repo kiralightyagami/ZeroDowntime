@@ -36,7 +36,7 @@ impl Store {
         .first(&mut self.conn)
         .expect("user not found");
         
-        if (user_result.password != input_password){
+        if user_result.password != input_password{
             return Ok(false);
         }
         Ok(true)
