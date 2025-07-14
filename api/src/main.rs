@@ -16,7 +16,8 @@ fn get_website(Path(name): Path<String>) -> String {
 #[handler]
 fn create_website(Json(data): Json<CreateWebsite>) -> Json<CreateWebsiteResponse> {
     let url = data.url;
-
+    let store = Store::default();
+    let website = store.create_website(url);
     let response = CreateWebsiteResponse {
         id: "123".to_string(),
     };
