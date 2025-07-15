@@ -2,8 +2,8 @@ use poem::{
     get, handler, listener::TcpListener, post, web::{Json,  Path},  Route, Server
 };
 
-use crate::req_input::CreateWebsite;
-use crate::req_output::CreateWebsiteResponse;
+use crate::req_input::{CreateUserInput, CreateWebsite};
+use crate::req_output::{CreateUserResponse, CreateWebsiteResponse, SignInResponse};
 use store::store::Store;
 pub mod req_input;
 pub mod req_output;
@@ -14,12 +14,32 @@ fn get_website(Path(name): Path<String>) -> String {
 }
 
 #[handler]
+fn sign_up(Json(data): Json<CreateUserInput>) -> Json<CreateUserResponse> {
+    let mut s = Store::default().unwrap();
+    let id = s.sign_up(data.username, data.password).unwrap();
+    let response = CreateUserResponse {
+        id: id,
+    };
+
+    Json(response)
+}
+
+#[handler]
+fn sign_in(Json(data): Json<CreateUserInput>) -> Json<SignInResponse> {
+    let mut s = Store::default().unwrap();
+    let id = s.sign_in(data.username, data.password).unwrap();
+    let response = SignInResponse {
+        jwt: String::from("jwt"),
+    };
+
+    Json(response)
+}
+#[handler]
 fn create_website(Json(data): Json<CreateWebsite>) -> Json<CreateWebsiteResponse> {
-    let url = data.url;
-    let store = Store::default();
-    let website = store.create_website(url);
+    let mut s = Store::default().unwrap();
+    let website = s.create_website("550e8400-e29b-41d4-a716-446655440000".to_string(), data.url).unwrap();
     let response = CreateWebsiteResponse {
-        id: "123".to_string(),
+        id: website.id,
     };
 
     Json(response)
