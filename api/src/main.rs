@@ -3,14 +3,19 @@ use poem::{
 };
 
 use crate::req_input::{CreateUserInput, CreateWebsite};
-use crate::req_output::{CreateUserResponse, CreateWebsiteResponse, SignInResponse};
+use crate::req_output::{CreateUserResponse, CreateWebsiteResponse, GetWebsiteResponse, SignInResponse};
 use store::store::Store;
 pub mod req_input;
 pub mod req_output;
 
 #[handler]
-fn get_website(Path(name): Path<String>) -> String {
-    format!("Hello, {}!", name) 
+fn get_website(Path(id): Path<String>) -> Json<GetWebsiteResponse> {
+    let mut s = Store::default().unwrap();
+    let website = s.get_website(id).unwrap();
+    let response = GetWebsiteResponse {
+        url: website.url,
+    };
+    Json(response)
 }
 
 #[handler]
@@ -50,7 +55,10 @@ async fn main() -> Result<(), std::io::Error> {
    
     let app = Route::new()
     .at("/status/:website_id", get(get_website))
-    .at("/website", post(create_website));
+    .at("/website", post(create_website))
+    .at("/user/sign-up", post(sign_up))
+    .at("/user/sign-in", post(sign_in));
+
     Server::new(TcpListener::bind("0.0.0.0:3000"))
         .name("poem-server")
         .run(app)

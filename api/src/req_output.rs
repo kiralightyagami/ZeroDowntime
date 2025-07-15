@@ -14,3 +14,8 @@ pub struct CreateUserResponse {
 pub struct SignInResponse {
     pub jwt: String,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct GetWebsiteResponse {
+    pub url: String,
+}
