@@ -1,56 +1,19 @@
 use std::sync::{Arc, Mutex};
 use poem::{
-        get, handler, listener::TcpListener, post, web::{Data, Json, Path},  Route, Server
+        get, listener::TcpListener, post, Route, Server
 };
 
 
-use crate::req_input::{CreateUserInput, CreateWebsite};
-use crate::req_output::{CreateUserResponse, CreateWebsiteResponse, GetWebsiteResponse, SignInResponse};
+use crate::routes::website::{get_website, create_website};
+use crate::routes::user::{sign_up, sign_in};
 use store::store::Store;
+
 pub mod req_input;
 pub mod req_output;
+pub mod routes;
 
-#[handler]
-fn get_website(Path(id): Path<String>, Data(s): Data<&Arc<Mutex<Store>>>) -> Json<GetWebsiteResponse> {
-    let mut locked_s = s.lock().unwrap();
-    let website = locked_s.get_website(id).unwrap();
-    let response = GetWebsiteResponse {
-        url: website.url,
-    };
-    Json(response)
-}
 
-#[handler]
-fn sign_up(Json(data): Json<CreateUserInput>, Data(s): Data<&Arc<Mutex<Store>>>) -> Json<CreateUserResponse> {
-    let mut locked_s = s.lock().unwrap();
-    let id = locked_s.sign_up(data.username, data.password).unwrap();
-    let response = CreateUserResponse {
-        id: id,
-    };
 
-    Json(response)
-}
-
-#[handler]
-fn sign_in(Json(data): Json<CreateUserInput>, Data(s): Data<&Arc<Mutex<Store>>>) -> Json<SignInResponse> {
-    let mut locked_s = s.lock().unwrap();
-    let _id = locked_s.sign_in(data.username, data.password).unwrap();
-    let response = SignInResponse {
-        jwt: String::from("jwt"),
-    };
-
-    Json(response)
-}
-#[handler]
-fn create_website(Json(data): Json<CreateWebsite>, Data(s): Data<&Arc<Mutex<Store>>>) -> Json<CreateWebsiteResponse> {
-    let mut locked_s = s.lock().unwrap();
-    let website = locked_s.create_website("550e8400-e29b-41d4-a716-446655440000".to_string(), data.url).unwrap();
-    let response = CreateWebsiteResponse {
-        id: website.id,
-    };
-
-    Json(response)
-}
 
 
 #[tokio::main(flavor = "multi_thread")]
