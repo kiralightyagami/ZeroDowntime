@@ -39,7 +39,7 @@ pub fn sign_in(Json(data): Json<CreateUserInput>, Data(s): Data<&Arc<Mutex<Store
             let token = encode(&Header::default(), &Claims {
                 sub: id.to_string(),
                 exp: 1000000000,
-            }, &EncodingKey::from_secret(b"secret")).map_err(|_| Error::from_status(StatusCode::INTERNAL_SERVER_ERROR))?;
+            }, &EncodingKey::from_secret(b"xyz")).map_err(|_| Error::from_status(StatusCode::INTERNAL_SERVER_ERROR))?;
 
             Ok(Json(SignInResponse {
                 jwt: token,
