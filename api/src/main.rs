@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 use poem::{
-        get, listener::TcpListener, post, Route, Server
+        get, listener::TcpListener, post, Route, Server, EndpointExt
 };
 
 
@@ -28,7 +28,7 @@ async fn main() -> Result<(), std::io::Error> {
     .data(s);
 
 
-    Server::new(TcpListener::bind("0.0.0.0:3000"))
+    Server::new(TcpListener::bind("0.0.0.0:8080"))
         .name("poem-server")
         .run(app)
         .await
